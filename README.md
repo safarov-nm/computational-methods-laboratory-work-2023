@@ -1,1 +1,1 @@
-# computational-methods-laboratory-work-2023
+# Соболезную всем, кто... Продолжайте.
