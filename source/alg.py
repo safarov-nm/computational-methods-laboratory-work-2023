@@ -1,5 +1,3 @@
-# alg.py
-
 import numpy as np
 from numpy import random
 from scipy.optimize import linear_sum_assignment

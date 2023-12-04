@@ -186,7 +186,7 @@ def Table(n, e, a_min, a_max, bd_min, bd_max, b_min, b_max):
         # Генерация случайных матриц на основе указанных параметров
         a = np.random.default_rng().uniform(a_min, a_max, size=n)
         b = np.zeros((n, n-1))
-        v = n // 3
+        v = n // 2 + 1
         b[:, :v] = np.random.default_rng().uniform(bd_min, bd_max, size=(n, v))
         b[:, v:] = np.random.default_rng().uniform(b_min, b_max, size=(n, n-1-v))
 
