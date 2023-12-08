@@ -2,33 +2,35 @@
 
 # Импорт необходимых библиотек и модулей
 import numpy as np  # Импорт библиотеки NumPy для работы с массивами и матрицами
-import alg as alg  # Импорт созданного модуля alg.py
+import alg as h  # Импорт созданного модуля alg.py
 import matplotlib.pyplot as plt  # Импорт библиотеки для построения графиков
+from tkinter import Tk, Label, Button, Entry, W, Toplevel
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 # Функция для расчета теоретических решений
 def theor_solution():
     # Задание матриц P1, P2, P3, P4
-    p1 = alg.np.array([7, 6, 5.1, 4, 6, 5.1, 4, 2, 5, 4, 2, 1, 4, 2, 1, 0.5]).reshape(4, 4)
-    p2 = alg.np.array([7, 6, 5.5, 4, 6, 5.1, 4, 2, 5, 4, 2, 1, 4, 2, 1, 0.5]).reshape(4, 4)
-    p3 = alg.np.array([4, 2, 2/3, 1/6, 15, 7.5, 2.5, 5/8, 6, 3, 1, 1/4, 12, 6, 2, 1/2]).reshape(4, 4)
-    p4 = alg.np.array([16, 32/3, 64/9, 128/27, 16, 4, 1, 1/4, 16, 8, 4, 2, 16, 16/3, 16/9, 16/27]).reshape(4, 4)
+    p1 = h.np.array([7, 6, 5.1, 4, 6, 5.1, 4, 2, 5, 4, 2, 1, 4, 2, 1, 0.5]).reshape(4, 4)
+    p2 = h.np.array([7, 6, 5.5, 4, 6, 5.1, 4, 2, 5, 4, 2, 1, 4, 2, 1, 0.5]).reshape(4, 4)
+    p3 = h.np.array([4, 2, 2/3, 1/6, 15, 7.5, 2.5, 5/8, 6, 3, 1, 1/4, 12, 6, 2, 1/2]).reshape(4, 4)
+    p4 = h.np.array([16, 32/3, 64/9, 128/27, 16, 4, 1, 1/4, 16, 8, 4, 2, 16, 16/3, 16/9, 16/27]).reshape(4, 4)
     
     # Инициализация экземпляров TaskAssignment для каждой матрицы с использованием разных алгоритмов
-    p1_Hun_max = alg.TaskAssignment(p1, 'Hungary_max', 0)
-    p1_Hun_min = alg.TaskAssignment(p1, 'Hungary_min', 0)
-    p1_greedy = alg.TaskAssignment(p1, 'greedy', 0)
+    p1_Hun_max = h.TaskAssignment(p1, 'Hungary_max', 0)
+    p1_Hun_min = h.TaskAssignment(p1, 'Hungary_min', 0)
+    p1_greedy = h.TaskAssignment(p1, 'greedy', 0)
     
-    p2_Hun_max = alg.TaskAssignment(p2, 'Hungary_max', 0)
-    p2_Hun_min = alg.TaskAssignment(p2, 'Hungary_min', 0)
-    p2_greedy = alg.TaskAssignment(p2, 'greedy', 0)
+    p2_Hun_max = h.TaskAssignment(p2, 'Hungary_max', 0)
+    p2_Hun_min = h.TaskAssignment(p2, 'Hungary_min', 0)
+    p2_greedy = h.TaskAssignment(p2, 'greedy', 0)
     
-    p3_Hun_max = alg.TaskAssignment(p3, 'Hungary_max', 0)
-    p3_Hun_min = alg.TaskAssignment(p3, 'Hungary_min', 0)
-    p3_greedy = alg.TaskAssignment(p3, 'greedy', 0)
+    p3_Hun_max = h.TaskAssignment(p3, 'Hungary_max', 0)
+    p3_Hun_min = h.TaskAssignment(p3, 'Hungary_min', 0)
+    p3_greedy = h.TaskAssignment(p3, 'greedy', 0)
     
-    p4_Hun_max = alg.TaskAssignment(p4, 'Hungary_max', 0)
-    p4_Hun_min = alg.TaskAssignment(p4, 'Hungary_min', 0)
-    p4_greedy = alg.TaskAssignment(p4, 'greedy', 0)
+    p4_Hun_max = h.TaskAssignment(p4, 'Hungary_max', 0)
+    p4_Hun_min = h.TaskAssignment(p4, 'Hungary_min', 0)
+    p4_greedy = h.TaskAssignment(p4, 'greedy', 0)
 
     # Определение теоретических значений решений
     p1_Hun_max_theor = 16
@@ -123,31 +125,29 @@ def Graphic(n, e, a_min, a_max, bd_min, bd_max, b_min, b_max):
     mas5 = [0] * n
     for i in range(1, e+1):
         
-        #Создаем случайную матрицу
-        a = np.random.uniform(a_min, a_max, size=n)
-            
-        b = np.zeros((n, n-1))
         v = n//2
-                
-        b[:, :v] = np.random.uniform(bd_min, bd_max, size=(n, v))
-        b[:, v:] = np.random.uniform(b_min, b_max, size=(n, n-1-v))
-            
         # Создание матрицы P на основе сгенерированных значений
         P = np.zeros((n, n))
         for m in range(n):
-            P[m, 0] = a[m]
-            for k in range(1, n):
-                P[m, k] = P[m, k-1] * b[m, k-1]
+            for k in range(n):
+                if k == 0:
+                    P[m][k] = np.random.uniform(a_min, a_max)
+                    
+                else:
+                    if k < v:
+                        b = np.random.uniform(bd_min, bd_max)
+                    else:
+                        b = np.random.uniform(b_min, b_max)
+                    P[m][k] = P[m][k-1] * b
     
         task_matrix = P
-        
         # Выполнение задачи назначения для различных алгоритмов, ищем индексы значений
-        ass_by_Hun_max = alg.TaskAssignment(task_matrix, 'Hungary_max', v)
-        ass_by_Hun_min = alg.TaskAssignment(task_matrix, 'Hungary_min', v)
-        ass_by_greedy = alg.TaskAssignment(task_matrix, 'greedy', v)
-        ass_by_t = alg.TaskAssignment(task_matrix, 'Thrifty', v)
-        ass_by_gt = alg.TaskAssignment(task_matrix, 'Greedy_Thrifty', v)
-        ass_by_tg = alg.TaskAssignment(task_matrix, 'Thrifty_Greedy', v)
+        ass_by_Hun_max = h.TaskAssignment(task_matrix, 'Hungary_max', v)
+        ass_by_Hun_min = h.TaskAssignment(task_matrix, 'Hungary_min', v)
+        ass_by_greedy = h.TaskAssignment(task_matrix, 'greedy', v)
+        ass_by_t = h.TaskAssignment(task_matrix, 'Thrifty', v)
+        ass_by_gt = h.TaskAssignment(task_matrix, 'Greedy_Thrifty', v)
+        ass_by_tg = h.TaskAssignment(task_matrix, 'Thrifty_Greedy', v)
                 
         Hun_max = ass_by_Hun_max.best_solution
         Hun_min = ass_by_Hun_min.best_solution
@@ -197,19 +197,30 @@ def Graphic(n, e, a_min, a_max, bd_min, bd_max, b_min, b_max):
     
 # Построение графика
 def show(x, y, y1, y2, y3, y4, y5):
-        
-        plt.plot(x, y, label='венгерский макс')
-        plt.plot(x, y1, label='венгерский мин')
-        plt.plot(x, y2, '--', label='жадный')
-        plt.plot(x, y3, '-.', label='бережливый')
-        plt.plot(x, y4, 'o--',label='жадный-бережный', markersize=2)
-        plt.plot(x, y5, ':',label='бережливый-жадный')
-        plt.title('График')
-        plt.xlabel('Время')
-        plt.ylabel('S')
-        plt.legend()
-        plt.grid(linewidth=0.2)
-        plt.show()
+    fig, ax = plt.subplots()
+    ax.plot(x, y, label='венгерский макс', color='blue', linestyle='-')
+    ax.plot(x, y1, label='венгерский мин', color='green', linestyle='--')
+    ax.plot(x, y2, label='жадный', color='red', linestyle='--', marker='o', markersize=2)
+    ax.plot(x, y3, label='бережливый', color='purple', linestyle='-.')
+    ax.plot(x, y4, label='жадный-бережный', color='orange', linestyle='--', marker='o', markersize=2)
+    ax.plot(x, y5, label='бережливый-жадный', color='brown', linestyle=':')
+    ax.set_title('График')
+    ax.set_xlabel('Время')
+    ax.set_ylabel('S')
+    ax.legend()
+    ax.grid(linewidth=0.2)
+    
+    # Создаем отдельное окно для графика
+    graph_window = Toplevel(root)
+    graph_window.title("Графики")
+    
+    # Устанавливаем размер окна с графиком
+    graph_window.geometry("800x800")
+
+    # Отображение графика в новом окне
+    canvas = FigureCanvasTkAgg(fig, master=graph_window)
+    canvas.draw()
+    canvas.get_tk_widget().pack(side='top', fill='both', expand=1)
     
 
 
@@ -224,28 +235,30 @@ def Table(n, e, a_min, a_max, bd_min, bd_max, b_min, b_max):
 
     # Проведение экспериментов для указанного числа раз (e)
     for i in range(1, e+1):
-        # Генерация случайных матриц на основе указанных параметров
-        a = np.random.default_rng().uniform(a_min, a_max, size=n)
-        b = np.zeros((n, n-1))
-        v = n // 2 + 1
-        b[:, :v] = np.random.default_rng().uniform(bd_min, bd_max, size=(n, v))
-        b[:, v:] = np.random.default_rng().uniform(b_min, b_max, size=(n, n-1-v))
-
-        # Построение матрицы P
+        
+        v = n//2
+        # Создание матрицы P на основе сгенерированных значений
         P = np.zeros((n, n))
-        for i in range(n):
-            P[i, 0] = a[i]
-            for j in range(1, n):
-                P[i, j] = P[i, j-1] * b[i, j-1]
+        for m in range(n):
+            for k in range(n):
+                if k == 0:
+                    P[m][k] = np.random.uniform(a_min, a_max)
+                    
+                else:
+                    if k < v:
+                        b = np.random.uniform(bd_min, bd_max)
+                    else:
+                        b = np.random.uniform(b_min, b_max)
+                    P[m][k] = P[m][k-1] * b
 
         # Выполнение задачи назначения для различных алгоритмов
         task_matrix = P
-        ass_by_Hun_min = alg.TaskAssignment(task_matrix, 'Hungary_min', v)
-        ass_by_Hun_max = alg.TaskAssignment(task_matrix, 'Hungary_max', v)
-        ass_by_greedy = alg.TaskAssignment(task_matrix, 'greedy', v)
-        ass_by_t = alg.TaskAssignment(task_matrix, 'Thrifty', v)
-        ass_by_gt = alg.TaskAssignment(task_matrix, 'Greedy_Thrifty', v)
-        ass_by_tg = alg.TaskAssignment(task_matrix, 'Thrifty_Greedy', v)
+        ass_by_Hun_min = h.TaskAssignment(task_matrix, 'Hungary_min', v)
+        ass_by_Hun_max = h.TaskAssignment(task_matrix, 'Hungary_max', v)
+        ass_by_greedy = h.TaskAssignment(task_matrix, 'greedy', v)
+        ass_by_t = h.TaskAssignment(task_matrix, 'Thrifty', v)
+        ass_by_gt = h.TaskAssignment(task_matrix, 'Greedy_Thrifty', v)
+        ass_by_tg = h.TaskAssignment(task_matrix, 'Thrifty_Greedy', v)
 
         # Суммирование результатов
         s += ass_by_Hun_max.max_cost
@@ -274,43 +287,86 @@ def Table(n, e, a_min, a_max, bd_min, bd_max, b_min, b_max):
     ]
     
     # Вывод таблицы
-    alg.print_table(table_data)
+    h.print_table(table_data)
 
     # Запись таблицы в файл и вывод на экран
     with open('data.txt', 'w') as file:
         file.write(str(table_data))
 
-def main():
-    # Вызов функции для вывода теоретических результатов
+# Функция для вызова экспериментов по кнопке
+def run_experiments():
+    n = int(entry_n.get())
+    e = int(entry_e.get())
+    a_min = float(entry_a_min.get())
+    a_max = float(entry_a_max.get())
+    bd_min = float(entry_bd_min.get())
+    bd_max = float(entry_bd_max.get())
+    b_min = float(entry_b_min.get())
+    b_max = float(entry_b_max.get())
+
+    # Вызов функций для построения графика и создания таблицы
+    Graphic(n, e, a_min, a_max, bd_min, bd_max, b_min, b_max)
+    Table(n, e, a_min, a_max, bd_min, bd_max, b_min, b_max)
     theor_solution()
 
-    flag = 1
-    while flag:
-        # Ввод параметров для эксперимента
-        print("Введите число этапов:", end=" ")
-        n = int(input())
-        print("Введите число эксприментов:", end=" ")
-        e = int(input())
-        print("Введите a минимальное:", end=" ")
-        a_min = float(input())
-        print("Введите a максимальное:", end=" ")
-        a_max = float(input())
-        print("Введите b дозревания минимальное (b > 1):", end=" ")
-        bd_min = float(input())
-        print("Введите b дозревания максимальное (b > 1):", end=" ")
-        bd_max = float(input())
-        print("Введите b увядания минимальное (b < 1):", end=" ")
-        b_min = float(input())
-        print("Введите b увядания максимальное (b < 1):", end=" ")
-        b_max = float(input())
+# Открываем окно
+root = Tk()
+root.title("Решение задачи дискретной оптимизации")
+root.geometry("520x280")
 
-        # Вызов функций для построения графика и создания таблицы
-        Graphic(n, e, a_min, a_max, bd_min, bd_max, b_min, b_max)
-        Table(n, e, a_min, a_max, bd_min, bd_max, b_min, b_max)
 
-        # Проверка на продолжение экспериментов
-        print("Продолжить? (0 - нет, 1 - да): ")
-        flag = int(input())
 
-if __name__ == "__main__":
-    main()
+# Добавляем поля для ввода данных
+Label(root, text="Число этапов:").grid(row=0, column=0, sticky="w")
+entry_n = Entry(root, width=10) 
+entry_n.grid(row=0, column=1, sticky="w")
+
+Label(root, text="Число экспериментов:").grid(row=1, column=0, sticky="w")
+entry_e = Entry(root, width=10) 
+entry_e.grid(row=1, column=1, sticky="w")
+
+Label(root, text="Минимальная сахаристость a:").grid(row=2, column=0, sticky="w")
+entry_a_min = Entry(root, width=10) 
+entry_a_min.grid(row=2, column=1, sticky="w")
+
+Label(root, text="Максимальная сахаристость a:").grid(row=3, column=0, sticky="w")
+entry_a_max = Entry(root, width=10) 
+entry_a_max.grid(row=3, column=1, sticky="w")
+
+Label(root, text="b дозревания минимальное (b > 1):").grid(row=0, column=2, sticky="w")
+entry_bd_min = Entry(root, width=10) 
+entry_bd_min.grid(row=0, column=3, sticky="w")
+
+Label(root, text="b дозревания максимальное (b > 1):").grid(row=1, column=2, sticky="w")
+entry_bd_max = Entry(root, width=10) 
+entry_bd_max.grid(row=1, column=3, sticky="w")
+
+Label(root, text="b увядания минимальное (b < 1):").grid(row=2, column=2, sticky="w")
+entry_b_min = Entry(root, width=10) 
+entry_b_min.grid(row=2, column=3, sticky="w")
+
+Label(root, text="b увядания максимальное (b < 1):").grid(row=3, column=2, sticky="w")
+entry_b_max = Entry(root, width=10) 
+entry_b_max.grid(row=3, column=3, sticky="w")
+
+# Устанавливаем стандартные значения для полей
+default_values = {
+    'n': '14',
+    'e': '100',
+    'a_min': '0.01',
+    'a_max': '0.3',
+    'bd_min': '1.1',
+    'bd_max': '1.5',
+    'b_min': '0.01',
+    'b_max': '1'
+}
+
+for key, value in default_values.items():
+    vars()[f'entry_{key}'].insert(0, value)
+
+# Добавляем кнопку для запуска экспериментов
+run_button = Button(root, text="Запустить эксперименты", command=run_experiments)
+run_button.grid(row=5, column=1, columnspan=2)
+
+# Запускаем окно
+root.mainloop()
